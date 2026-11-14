@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071525">
+  <meta name="description" content="Join Shrimp SMP for a Minecraft adventure with a friendly community.">
+  <title>Shrimp SMP — Build Your Adventure</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #071525;
+      --panel: rgba(8, 24, 43, .88);
+      --blue: #38bdff;
+      --blue-light: #bceeff;
+      --text: #f3faff;
+      --muted: #b5c9d9;
+      --pixel: "Press Start 2P", monospace;
+      --body: "Roboto", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 90px;
+    }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--text);
+      background: var(--bg);
+      font-family: var(--body);
+    }
+
+    a { color: inherit; }
+
+    .scene {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 25%, rgba(46, 157, 219, .2), transparent 42%),
+        linear-gradient(180deg, #092b4a 0%, #102c47 49%, #123747 73%, #10281f 100%);
+    }
+
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .13;
+      background-image:
+        linear-gradient(rgba(205, 239, 255, .35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(205, 239, 255, .35) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(to bottom, #000, transparent 85%);
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      opacity: .75;
+      background-image:
+        radial-gradient(#e1f7ff 1px, transparent 1.6px),
+        radial-gradient(#85d6ff 1px, transparent 1.6px);
+      background-size: 101px 91px, 151px 137px;
+      background-position: 12px 16px, 60px 42px;
+      mask-image: linear-gradient(to bottom, #000, transparent 65%);
+    }
+
+    .moon {
+      position: absolute;
+      top: 13%;
+      right: 13%;
+      width: 74px;
+      height: 74px;
+      background: #d9f5ff;
+      box-shadow: 0 0 50px rgba(151, 222, 255, .45);
+      clip-path: polygon(25% 0, 75% 0, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0 75%, 0 25%, 25% 25%);
+    }
+
+    .hills {
+      position: absolute;
+      right: -6%;
+      bottom: 0;
+      left: -6%;
+      height: 37%;
+      background:
+        linear-gradient(135deg, transparent 0 40%, #18475b 40% 61%, transparent 61%) 0 0 / 380px 230px repeat-x,
+        linear-gradient(45deg, transparent 0 38%, #123a50 38% 62%, transparent 62%) 70px 35px / 450px 240px repeat-x,
+        linear-gradient(#28644a 0 25%, #193e2d 25%);
+    }
+
+    .block {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      opacity: .17;
+      background: linear-gradient(135deg, #8cddff 0 25%, #1685bf 25% 55%, #07517f 55%);
+      box-shadow: 0 0 25px rgba(56, 189, 255, .18);
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .block-one { top: 29%; left: 10%; }
+    .block-two { top: 54%; right: 9%; width: 24px; height: 24px; animation-delay: -3s; }
+    .block-three { top: 17%; left: 76%; width: 18px; height: 18px; animation-delay: -5s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-18px) rotate(8deg); }
+    }
+
+    .container { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(4, 15, 29, .83);
+      border-bottom: 1px solid rgba(159, 223, 255, .16);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font: 12px/1.8 var(--pixel);
+      text-decoration: none;
+      white-space: nowrap;
+      text-shadow: 2px 2px #075185;
+    }
+
+    .brand span { color: var(--blue); }
+
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: white; }
+
+    .nav-links .discord-link {
+      padding: 10px 14px;
+      border: 1px solid rgba(56, 189, 255, .45);
+      border-radius: 9px;
+      color: var(--blue-light);
+    }
+
+    .hero {
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 85px 0 95px;
+    }
+
+    .hero-inner { max-width: 850px; }
+
+    .server-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border: 1px solid rgba(131, 224, 255, .3);
+      border-radius: 999px;
+      background: rgba(7, 35, 59, .78);
+      color: var(--blue-light);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7bf0aa;
+      box-shadow: 0 0 12px #7bf0aa;
+    }
+
+    h1 {
+      margin: 30px 0 20px;
+      font: clamp(27px, 6vw, 58px)/1.6 var(--pixel);
+      text-shadow: 4px 5px 0 #075185;
+    }
+
+    h1 span { color: var(--blue); }
+
+    .hero-copy {
+      max-width: 650px;
+      margin: auto;
+      color: #d4e8f5;
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.75;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+      min-height: 49px;
+      padding: 13px 18px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .18s, filter .18s;
+    }
+
+    .button:hover { transform: translateY(-3px); filter: brightness(1.1); }
+    .button-main { background: var(--blue); color: #041525; }
+    .button-alt { background: rgba(7, 25, 43, .8); border-color: rgba(184, 237, 255, .35); }
+    .button-discord { background: #5865f2; color: white; }
+
+    .hint {
+      margin-top: 46px;
+      color: #a7c3d7;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    section { padding: 48px 0; }
+
+    .section-title {
+      margin: 0 0 12px;
+      text-align: center;
+      font: clamp(15px, 2.8vw, 21px)/1.8 var(--pixel);
+      text-shadow: 3px 3px #075185;
+    }
+
+    .section-copy {
+      max-width: 620px;
+      margin: 0 auto 28px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+    }
+
+    .card {
+      padding: 24px;
+      border: 1px solid rgba(117, 207, 250, .26);
+      border-radius: 13px;
+      background: var(--panel);
+      box-shadow: 0 16px 42px rgba(0, 0, 0, .2);
+      transition: transform .2s, border-color .2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(117, 207, 250, .6);
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(56, 189, 255, .2);
+      border-radius: 12px;
+      background: rgba(56, 189, 255, .12);
+      font-size: 23px;
+    }
+
+    .card h3 { margin: 0 0 10px; color: var(--blue-light); font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); line-height: 1.7; }
+
+    .join-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 17px;
+    }
+
+    .ip-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 17px;
+      padding: 11px;
+      border: 1px solid rgba(117, 207, 250, .28);
+      border-radius: 9px;
+      background: #041321;
+    }
+
+    .ip-box code { color: #aeeaff; font-size: 14px; overflow-wrap: anywhere; }
+
+    .copy-button {
+      flex: 0 0 auto;
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 7px;
+      background: #147eae;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .member-count {
+      margin: 12px 0;
+      color: white;
+      font: clamp(17px, 3vw, 25px)/1.7 var(--pixel);
+    }
+
+    .rank-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 25px;
+      padding: clamp(24px, 5vw, 40px);
+      border: 1px solid rgba(117, 207, 250, .32);
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 92% 10%, rgba(56, 189, 255, .2), transparent 36%),
+        var(--panel);
+    }
+
+    .rank-card h3 { margin: 0 0 10px; color: var(--blue-light); font-size: 22px; }
+    .rank-card p { max-width: 650px; margin: 0; color: var(--muted); line-height: 1.7; }
+
+    .note { margin-top: 14px !important; font-size: 13px; }
+
+    footer {
+      margin-top: 45px;
+      padding: 30px 0;
+      border-top: 1px solid rgba(159, 223, 255, .16);
+      background: rgba(4, 15, 29, .88);
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    footer p { margin: 8px 0; }
+
+    @media (max-width: 760px) {
+      .nav { flex-direction: column; justify-content: center; padding: 14px 0; }
+      .nav-links { justify-content: center; flex-wrap: wrap; gap: 14px 18px; }
+      .grid { grid-template-columns: 1fr; }
+      .join-grid { grid-template-columns: 1fr; }
+      .rank-card { align-items: flex-start; flex-direction: column; }
+      .hero { min-height: 530px; padding: 65px 0; }
+      .moon { width: 50px; height: 50px; }
+    }
+
+    @media (max-width: 430px) {
+      .ip-box { align-items: stretch; flex-direction: column; }
+      .button-row .button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="stars"></div>
+    <div class="moon"></div>
+    <div class="hills"></div>
+    <div class="block block-one"></div>
+    <div class="block block-two"></div>
+    <div class="block block-three"></div>
+  </div>
+
+  <header class="topbar">
+    <div class="container nav">
+      <a class="brand" href="#">🍤 SHRIMP <span>SMP</span></a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#about">About</a>
+        <a href="#join">Join</a>
+        <a href="#zein">Zein+</a>
+        <a class="discord-link" href="https://discord.gg/zeWVTMdFb" target="_blank" rel="noopener noreferrer">Discord ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="hero-inner">
+        <div class="server-pill"><span class="online-dot"></span> Your next Minecraft adventure</div>
+        <h1>WELCOME TO<br><span>SHRIMP SMP</span></h1>
+        <p class="hero-copy">
+          Explore a blocky world, build something incredible, and meet your next
+          favorite teammates. Your adventure starts here.
+        </p>
+        <div class="button-row">
+          <a class="button button-main" href="#join">⛏ Join the SMP</a>
+          <a class="button button-discord" href="https://discord.gg/zeWVTMdFb" target="_blank" rel="noopener noreferrer">💬 Join Discord</a>
+        </div>
+        <div class="hint">Scroll down to explore ↓</div>
+      </div>
+    </section>
+
+    <section class="container" id="about">
+      <h2 class="section-title">MAKE THIS WORLD YOURS</h2>
+      <p class="section-copy">Build, explore, and make memories with the Shrimp SMP community.</p>
+      <div class="grid">
+        <article class="card">
+          <div class="icon">🌍</div>
+          <h3>Explore</h3>
+          <p>Set out into the world, find new places, and gather everything you need for your next project.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🏗️</div>
+          <h3>Create</h3>
+          <p>Build a starter base, a giant monument, or whatever you can dream up—one block at a time.</p>
+        </article>
+        <article class="card">
+          <div class="icon">🤝</div>
+          <h3>Connect</h3>
+          <p>Meet other players, team up on builds, and be part of the Shrimp SMP community.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="container" id="join">
+      <h2 class="section-title">READY TO JOIN?</h2>
+      <p class="section-copy">Add the server address in Minecraft’s multiplayer menu and jump in.</p>
+      <div class="join-grid">
+        <article class="card">
+          <div class="icon">🖥️</div>
+          <h3>Minecraft server IP</h3>
+          <p>Copy this address to connect to Shrimp SMP.</p>
+          <div class="ip-box">
+            <code id="serverIp">shrimp-immigration.tun.ply.gg</code>
+            <button class="copy-button" id="copyButton" onclick="copyIp()">Copy IP</button>
+          </div>
+          <p class="note">If your server needs a port, add it to the address.</p>
+        </article>
+
+        <article class="card">
+          <div class="icon">💬</div>
+          <h3>Join our Discord</h3>
+          <div class="member-count" id="memberCount">Loading…</div>
+          <p id="memberStatus">Checking approximate member count</p>
+          <div class="button-row" style="justify-content:flex-start">
+            <a class="button button-discord" href="https://discord.gg/zeWVTMdFb" target="_blank" rel="noopener noreferrer">Join the community ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="container" id="zein">
+      <h2 class="section-title">SUPPORT THE SMP</h2>
+      <p class="section-copy">Show your support with the Zein+ rank.</p>
+      <div class="rank-card">
+        <div>
+          <h3>⭐ Zein+ Rank</h3>
+          <p>
+            Add the price and exact benefits of Zein+ here. After checkout, explain
+            how players should open a Discord ticket with their claim code and Minecraft username.
+          </p>
+          <p class="note">Use a hosted checkout link. Don’t put payment secret keys in this public webpage.</p>
+        </div>
+        <a class="button button-main" href="YOUR_CHECKOUT_LINK">Get Zein+</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="brand">🍤 SHRIMP <span>SMP</span></p>
+      <p>Be kind, play fair, and have fun.</p>
+      <p>Not an official Minecraft service.</p>
+    </div>
+  </footer>
+
+  <script>
+    async function copyIp() {
+      const ip = document.getElementById("serverIp").textContent;
+      const button = document.getElementById("copyButton");
+
+      try {
+        await navigator.clipboard.writeText(ip);
+        button.textContent = "Copied!";
+      } catch {
+        window.prompt("Copy the server IP:", ip);
+      }
+
+      setTimeout(() => button.textContent = "Copy IP", 1600);
+    }
+
+    async function loadDiscordCount() {
+      const count = document.getElementById("memberCount");
+      const status = document.getElementById("memberStatus");
+
+      try {
+        const response = await fetch(
+          "https://discord.com/api/invites/zeWVTMdFb?with_counts=true"
+        );
+
+        if (!response.ok) throw new Error("Count unavailable");
+
+        const invite = await response.json();
+        const members = invite.approximate_member_count;
+
+        if (typeof members !== "number") throw new Error("Count unavailable");
+
+        count.textContent = members.toLocaleString() + " MEMBERS";
+        status.textContent = "Approximate Discord server member count";
+      } catch {
+        count.textContent = "JOIN OUR DISCORD";
+        status.textContent = "Member count is unavailable right now";
+      }
+    }
+
+    loadDiscordCount();
+  </script>
+</body>
+</html>
